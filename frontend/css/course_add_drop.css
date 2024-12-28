@@ -1,0 +1,39 @@
+#school_timetable {
+    border-collapse: collapse;
+    border: 2px solid rgb(140 140 140);
+    /* font-family: sans-serif; */
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.school_timetable caption {
+    /* caption-side: bottom; */
+    padding: 10px;
+    font-weight: bold;
+}
+
+.school_timetable thead, tfoot {
+    background-color: rgb(228 240 245);
+}
+
+.school_timetable th, td {
+    border: 1px solid rgb(160 160 160);
+    padding: 8px 10px;
+}
+
+.school_timetable td:last-of-type {
+    text-align: center;
+}
+
+.school_timetable tbody > tr:nth-of-type(even) {
+    background-color: rgb(237 238 242);
+}
+
+.school_timetable tfoot th {
+    text-align: right;
+}
+
+.school_timetable tfoot td {
+    font-weight: bold;
+}
+  

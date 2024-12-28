@@ -1,0 +1,39 @@
+#course {
+    border-collapse: collapse;
+    border: 2px solid rgb(140 140 140);
+    /* font-family: sans-serif; */
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.course caption {
+    /* caption-side: bottom; */
+    padding: 10px;
+    font-weight: bold;
+}
+
+.course thead, tfoot {
+    background-color: rgb(228 240 245);
+}
+
+.course th, td {
+    border: 1px solid rgb(160 160 160);
+    padding: 8px 10px;
+}
+
+.course td:last-of-type {
+    text-align: center;
+}
+
+.course tbody > tr:nth-of-type(even) {
+    background-color: rgb(237 238 242);
+}
+
+.course tfoot th {
+    text-align: right;
+}
+
+.course tfoot td {
+    font-weight: bold;
+}
+  
