@@ -11,7 +11,7 @@
             <table class="menu_css">
                 <tr>
                     <td>
-                        <a href="index.php">Home</a>
+                        <a href="../../main.php">主頁面</a>
                     </td>
                     <td>
                         <a href="../php/course_add_drop.php">課程加退選</a>
