@@ -31,54 +31,85 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            background: url('background.webp') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
         }
+
         .login-container {
-            background: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
             text-align: center;
         }
+
         .login-container h1 {
             margin-bottom: 20px;
+            font-size: 24px;
             color: #333;
         }
+
         .login-container form {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
+
         .login-container input[type="text"],
         .login-container input[type="password"] {
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
             outline: none;
-            transition: border 0.3s;
+            transition: border-color 0.3s;
         }
+
         .login-container input[type="text"]:focus,
         .login-container input[type="password"]:focus {
             border-color: #007BFF;
         }
+
         .login-container button {
             background-color: #007BFF;
             color: #fff;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background-color 0.3s;
         }
+
         .login-container button:hover {
             background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 20px 30px;
+            }
+
+            .login-container h1 {
+                font-size: 20px;
+            }
+
+            .login-container input[type="text"],
+            .login-container input[type="password"] {
+                font-size: 14px;
+            }
+
+            .login-container button {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
