@@ -55,17 +55,13 @@ function getStudentSchedule($conn, $student_id) {
               WHERE Enrollment_Records.student_id = ?";
 
     $stmt = $conn->prepare($query);
-    
     if (!$stmt) {
         die("Prepare failed: " . $conn->error);
     }
-
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
-    
     $result = $stmt->get_result();
     $schedule = $result->fetch_all(MYSQLI_ASSOC);
-    
     $stmt->close();
     return $schedule;
 }
@@ -78,14 +74,11 @@ function getTotalCredits($conn, $student_id) {
               WHERE Enrollment_Records.student_id = ?";
 
     $stmt = $conn->prepare($query);
-    
     if (!$stmt) {
         die("Prepare failed: " . $conn->error);
     }
-
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
-    
     $stmt->bind_result($total_credits);
     $stmt->fetch();
     $stmt->close();
@@ -104,10 +97,30 @@ function displaySchedule($schedule, $username, $total_credits) {
         }
     }
 
-    // 顯示週課表
-    echo "<h1>{$username} 的課表</h1>";
-    echo "<table border='1' cellspacing='0' cellpadding='5' style='text-align: center;'>";
-    echo "<tr><th>時間</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th></tr>";
+    // 顯示頁面
+    echo "<!DOCTYPE html>
+    <html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css' rel='stylesheet'>
+        <title>課表</title>
+    </head>
+    <body>
+        <div class='container mt-5'>
+            <h1 class='text-center mb-4'>{$username} 的課表</h1>
+            <table class='table table-bordered table-striped'>
+                <thead class='table-dark'>
+                    <tr>
+                        <th>時間</th>
+                        <th>星期一</th>
+                        <th>星期二</th>
+                        <th>星期三</th>
+                        <th>星期四</th>
+                        <th>星期五</th>
+                    </tr>
+                </thead>
+                <tbody>";
 
     // 節次對應時間
     $time_slots = [
@@ -125,26 +138,28 @@ function displaySchedule($schedule, $username, $total_credits) {
 
     foreach ($time_slots as $slot => $time) {
         echo "<tr>";
-        echo "<td>$time</td>";
+        echo "<td class='text-center'>{$time}</td>";
         for ($day = 1; $day <= 5; $day++) {
-            echo "<td>" . ($weekly_schedule[$day][$slot] ?? "") . "</td>";
+            echo "<td class='text-center'>" . ($weekly_schedule[$day][$slot] ?? "") . "</td>";
         }
         echo "</tr>";
     }
 
-    echo "</table>";
+    echo "</tbody></table>";
 
-    // 顯示總學分
-    echo "<br><p>目前選擇了 <strong>{$total_credits}</strong> 學分的課程。</p>";
-
-    // 返回主畫面按鈕
-    echo "<br><p><a href='main.php'><button type='button'>返回主畫面</button></a></p>";
+    // 顯示總學分與返回按鈕
+    echo "<div class='text-center'>
+            <p class='mt-4'>目前選擇了 <strong>{$total_credits}</strong> 學分的課程。</p>
+            <a href='main.php' class='btn btn-primary'>返回主畫面</a>
+          </div>
+        </div>
+    </body>
+    </html>";
 }
 
 // 函數：根據時間區間決定節次
 function getTimeSlots($start_slot, $end_slot) {
-    $slots = range($start_slot, $end_slot); // 包含開始節次，不包含結束節次
-    return $slots;
+    return range($start_slot, $end_slot);
 }
 
 ?>
