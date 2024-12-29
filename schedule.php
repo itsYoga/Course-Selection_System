@@ -5,7 +5,7 @@ session_start();
 $host = 'localhost'; 
 $db = 'school_db'; 
 $user = 'root'; 
-$pass = ''; 
+$pass = 'sean930516'; 
 // Create connection
 $conn = new mysqli($host, $user, $pass, $db);
 
