@@ -86,6 +86,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .password-container button:hover {
             background-color: #0056b3;
         }
+        .back-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6c757d;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="password" name="new_password" placeholder="New Password" required>
             <button type="submit">Update Password</button>
         </form>
+        <a href="main.php" class="back-button">Back to Main Page</a>
     </div>
 </body>
 </html>
