@@ -68,20 +68,19 @@ function getStudentSchedule($conn, $student_id) {
 
 // 函數：取得總學分
 function getTotalCredits($conn, $student_id) {
-    $query = "SELECT SUM(Courses.credits) AS total_credits
-              FROM Enrollment_Records
-              JOIN Courses ON Enrollment_Records.course_id = Courses.course_id
-              WHERE Enrollment_Records.student_id = ?";
-
+    $query = "SELECT GetTotalCredits(?) AS total_credits";
     $stmt = $conn->prepare($query);
+
     if (!$stmt) {
         die("Prepare failed: " . $conn->error);
     }
+
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $stmt->bind_result($total_credits);
     $stmt->fetch();
     $stmt->close();
+
     return $total_credits;
 }
 
