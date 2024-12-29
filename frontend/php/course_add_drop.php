@@ -19,7 +19,8 @@
         <link rel="stylesheet" href="../css/menu.css" /><!--連接css-->
     </head>
     <body>
-        <div class="menu"><!--可選擇頁面-->
+        <!--可選擇頁面-->
+        <!-- <div class="menu">
             <table class="menu_css">
                 <tr>
                     <td>
@@ -33,9 +34,9 @@
                     </td>
                 </tr>
             </table>
-        </div>
+        </div> -->
 
-        <br /><br />
+        <!-- <br /><br /> -->
         <div class="col-sm-8">
             <table class="school_timetable"><!--暫定動態課表-->
                 <caption>暫定動態課表</caption>
@@ -161,70 +162,50 @@
 
         <br /><br />
 
+        <script>
+            // 加入目前已有課程
+            function addCurrentCourse(current_course_time, course_name){
+                let el = document.getElementById(current_course_time);
+                if (el) el.textContent = course_name;
+            }
+        </script>
+
         <?php
             // 查詢此使用者的 student_id
             include "select_student_id.php";
 
-            $status = "enrolled";
             $current_course = [[]];
 
             // 看目前已選甚麼課程
             $query = ("SELECT course_name, day_of_week, start_time, end_time
                         FROM (courses natural join course_schedules) join enrollment_records using (course_id)
-                        WHERE student_id = ? AND status = ?");
+                        WHERE student_id = ?");
 
             $stmt = $db->prepare($query);
-            $error = $stmt->execute(array($student_id, $status));
+            $error = $stmt->execute(array($student_id));
             $result = $stmt->fetchAll();
 
             // 有已選的課程
             if(count($result) != 0){
                 for($i = 0; $i < count($result); $i++){
-                    // array_push($current_course, $result[$i]['course_name']);
-                    // array_push($current_course, $result[$i]['day_of_week']);
-                    // array_push($current_course, $result[$i]['start_time']);
-                    // array_push($current_course, $result[$i]['end_time']);
                     $current_course[$i][0] = $result[$i]['course_name'];
                     $current_course[$i][1] = $result[$i]['day_of_week'];
                     $current_course[$i][2] = $result[$i]['start_time'];
                     $current_course[$i][3] = $result[$i]['end_time'];
                 }
-                // 利用 json 來傳值給 js
-                // $result_json = json_encode($current_course);
 
-
-                // $result = json_decode($result_json, true);
-    
-                // 將現有的課程加入 暫定動態課表 中
-                // 將 data 裡的上課時間從 day_of_week, start_time, end_time 轉成例如：101 102 103
-                // $data = [];
-                // $course_time_array = []; // 放全部的上課時間
-                // $course_time_number = []; // 放每個 course 的上課節數
-    
-                // $course_id = []; // 放每個 course 的 course_id
-    
                 for($i = 0; $i < count($current_course); $i++) {
-                    // $course_time = [];
                     $course_name = $current_course[$i][0];
                     $day_of_week = (int) $current_course[$i][1];
                     $start_time = (int) $current_course[$i][2];
                     $end_time = (int) $current_course[$i][3];
-                    // array_push($course_id, $course[5]);
                     
                     $current_course_time = "";
                     for ($j = $start_time; $j <= $end_time; $j++) {
                         $current_course_time = (string) $day_of_week * 100 + $j;
-                        echo $current_course_time . " " . $course_name;
+                        // echo $current_course_time . " " . $course_name;
                         echo "<script type='text/javascript'> addCurrentCourse('$current_course_time', '$course_name'); </script>"; // 更改指定表格的 text
-
-                        // $course_time[] = $temp;
-                        // $course_time_array[] = $temp; // 全部節數加入陣列
                     }
-    
-                    // $course_time_number[] = count($course_time); // 每門課的節數
-                    // $course[2] = implode(' ', $course_time); // 用空格連接節數
-                    // array_splice($course, 3); // 移除 start_time, end_time, course_id    3 表示移除 $course[3] 以後的元素
-                    // $data[] = $course;
                 }
             }
 
@@ -292,6 +273,7 @@
                 </tr>
             </thead>
             <tbody>
+                <!--增加課程資訊-->
                 <?php foreach ($data as $i => $course): ?>
                     <tr>
                         <?php foreach ($course as $value): ?>
@@ -306,12 +288,6 @@
 
 
         <script>
-            // 加入目前已有課程
-            function addCurrentCourse(current_course_time, course_name){
-                let el = document.getElementById(current_course_time);
-                if (el) el.textContent = course_name;
-            }
-
             let courseTimeArray = <?= json_encode($course_time_array) ?>;
             let courseTimeNumber = <?= json_encode($course_time_number) ?>;
             let data = <?= json_encode($data) ?>;
@@ -319,6 +295,16 @@
             
             // 加選功能
             function addCourse(index) {
+                let tempCount = 0; // 計算目前的指定課程在 courseTimeArray 的哪個位置
+                for (let j = 0; j < index; j++) {
+                    tempCount += courseTimeNumber[j];
+                }
+
+                for (let j = tempCount; j < tempCount + courseTimeNumber[index]; j++) {
+                    let el = document.getElementById(courseTimeArray[j]);
+                    if (el) el.textContent = data[index][1]; // 更改指定表格的 text
+                }
+
                 // 呼叫 insert_enrollment.php
                 fetch('insert_enrollment.php', {
                     method: 'POST',
@@ -341,18 +327,6 @@
                     .catch((error) => {
                         console.error('Error during enrollment:', error);
                     });
-                
-                let tempCount = 0; // 計算目前的指定課程在 courseTimeArray 的哪個位置
-                for (let j = 0; j < index; j++) {
-                    tempCount += courseTimeNumber[j];
-                }
-
-                for (let j = tempCount; j < tempCount + courseTimeNumber[index]; j++) {
-                    let el = document.getElementById(courseTimeArray[j]);
-                    if (el) el.textContent = data[index][1]; // 更改指定表格的 text
-                }
-
-                
             }
 
             // 退選功能
@@ -392,5 +366,6 @@
             }
         </script>
 
+        <p><a href='../../main.php'><button type='button'>返回主畫面</button></a></p>
     </body>
 </html>

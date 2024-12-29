@@ -17,28 +17,24 @@
     // 查詢此使用者的 student_id
     include "select_student_id.php";
 
-    $status = "enrolled";
     $input = json_decode(file_get_contents('php://input'), true);
     $course_id = $input['course_id'];
     $exist_course = false;
 
     // 看此課程有無加選過 沒有則 insert
-    $query = ("SELECT * FROM enrollment_records WHERE course_id = ? AND status = ?");
+    $query = ("SELECT * FROM enrollment_records WHERE course_id = ?");
     $stmt = $db->prepare($query);
-    $error = $stmt->execute(array($course_id, $status));
+    $error = $stmt->execute(array($course_id));
     $result = $stmt->fetchAll();
     if(count($result) != 0){
         $exist_course = true;
-        echo "<script type='text/javascript'> alert('此課程已加選過'); </script>";
-        echo "此課程已加選過";
-        exit;
     }
 
     if(!$exist_course){
         // 加入目前的課程到 enrollment_records
-        $query = ("INSERT INTO enrollment_records (student_id, course_id, status) 
-        VALUES (?, ?, ?)");
+        $query = ("INSERT INTO enrollment_records (student_id, course_id) 
+                    VALUES (?, ?)");
         $stmt = $db->prepare($query);
-        $result = $stmt->execute(array($student_id, $course_id, $status));
+        $result = $stmt->execute(array($student_id, $course_id));
     }
 ?>

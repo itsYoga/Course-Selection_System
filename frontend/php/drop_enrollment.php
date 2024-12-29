@@ -22,9 +22,8 @@
     $course_id = $input['course_id'];
 
     // 將目前的課程狀態改成 dropped
-    $query = ("UPDATE enrollment_records 
-                    SET status = ?
-                    WHERE course_id = ?");
+    $query = ("DELETE FROM enrollment_records 
+                WHERE course_id = ?");
     $stmt = $db->prepare($query);
-    $result = $stmt->execute(array($status, $course_id));
+    $result = $stmt->execute(array($course_id));
 ?>
