@@ -211,7 +211,8 @@
 
             // 抓取資料庫中與課程相關訊息的檔案
             $query = ("SELECT department, course_name, day_of_week, start_time, end_time, course_id 
-                        from (courses natural join course_schedules) join teachers using(teacher_id)");
+                        from (courses natural join course_schedules) join teachers using(teacher_id)
+                        order by day_of_week, start_time");
             $stmt = $db->prepare($query);
             $error = $stmt->execute(array());
             $result = $stmt->fetchAll();

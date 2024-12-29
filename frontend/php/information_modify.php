@@ -28,7 +28,8 @@
                             <th scope="col">課程名稱</th>
                             <th scope="col">描述</th>
                             <th scope="col">學分</th>
-                            <th scope="col">教室</th>
+                            <th scope="col">教師編號</th>
+                            <th scope="col">教室編號</th>
                             <th scope="col">星期</th>
                             <th scope="col">開始節數</th>
                             <th scope="col">結束節數</th>
@@ -36,16 +37,54 @@
                     </thead>
 
                     <tbody>
-                        
                             <tr>
-                                
-                                    <td><input type="text" name="course_name" /></td>
-                                    <td><input type="text" name="description" /></td>
-                                    <td><input type="text" name="credits" /></td>
-                                    <td><input type="text" name="classroom_id" /></td>
-                                    <td><input type="text" name="day_of_week" /></td>
-                                    <td><input type="text" name="start_time" /></td>
-                                    <td><input type="text" name="end_time" /></td>
+                                <td><input type="text" name="course_name" /></td>
+                                <td><input type="text" name="description" /></td>
+                                <td><input type="text" name="credits" style="width: 50px;" /></td>
+
+                                <!--從資料庫中導入資訊到 下拉式選單 中-->
+                                <?php 
+                                    include "select_function.php";
+                                    select($db, "teacher_id", "teachers");
+                                    select($db, "classroom_id", "classrooms");
+                                ?>
+
+                                <td><select name="day_of_week" style="width: 50px;" >
+                                    <option value="">請選擇</option>    
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                    <option value=6>6</option>
+                                    <option value=7>7</option>
+                                </select></td>
+                                <td><select name="start_time" style="width: 70px;" >
+                                    <option value="">請選擇</option>
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                    <option value=6>6</option>
+                                    <option value=7>7</option>
+                                    <option value=8>8</option>
+                                    <option value=9>9</option>
+                                    <option value=10>10</option>
+                                </select></td>
+                                <td><select name="end_time" style="width: 70px;" >
+                                    <option value="">請選擇</option>    
+                                    <option value=1>1</option>
+                                    <option value=2>2</option>
+                                    <option value=3>3</option>
+                                    <option value=4>4</option>
+                                    <option value=5>5</option>
+                                    <option value=6>6</option>
+                                    <option value=7>7</option> 
+                                    <option value=8>8</option>
+                                    <option value=9>9</option>
+                                    <option value=10>10</option>
+                                </select></td>
                             </tr>
 
                             <tr></tr>
@@ -66,34 +105,42 @@
         $course_name = $_POST['course_name'];
         $description = $_POST['description'];
         $credits = $_POST['credits'];
+        $teacher_id = $_POST['teacher_id'];
         $classroom_id = $_POST['classroom_id'];
         $day_of_week = $_POST['day_of_week'];
         $start_time = $_POST['start_time'];
         $end_time = $_POST['end_time'];
-        $teacher_id = 1;
 
-        // insert into courses
-        $query = ("INSERT INTO courses (course_name, description, credits, teacher_id, classroom_id) 
-                    VALUES (?, ?, ?, ?, ?)");
-        $stmt = $db->prepare($query);
-        $result = $stmt->execute(array($course_name, $description, $credits, $teacher_id, $classroom_id));
+        // 如果有任一個變數沒有值就不執行
+        if($course_name == "" || $description == "" || $credits == "" || $teacher_id == "" || $classroom_id == "" || $day_of_week == "" || $start_time == "" || $end_time == ""){
+            echo "<script type='text/javascript'> alert('請輸入完整資訊'); </script>";
+        }else{
+            // insert into courses
+            $query = ("INSERT INTO courses (course_name, description, credits, teacher_id, classroom_id) 
+            VALUES (?, ?, ?, ?, ?)");
+            $stmt = $db->prepare($query);
+            $result = $stmt->execute(array($course_name, $description, $credits, $teacher_id, $classroom_id));
 
-        // select 剛剛新增的 course_id
-        $query = ("SELECT course_id
-                        FROM courses
-                        WHERE course_name = ? AND description = ? AND credits = ? AND classroom_id = ?");
-        $stmt = $db->prepare($query);
-        $error = $stmt->execute(array($course_name, $description, $credits, $classroom_id));
-        $result = $stmt->fetchAll();
-        for($i = 0; $i < count($result); $i++){
+            // select 剛剛新增的 course_id
+            $query = ("SELECT course_id
+                    FROM courses
+                    WHERE course_name = ? AND description = ? AND credits = ? AND classroom_id = ?");
+            $stmt = $db->prepare($query);
+            $error = $stmt->execute(array($course_name, $description, $credits, $classroom_id));
+            $result = $stmt->fetchAll();
+            for($i = 0; $i < count($result); $i++){
             $course_id = $result[$i][0];
-        }
+            }
 
-        // insert into course_schdeules
-        $query = ("INSERT INTO course_schedules (course_id, day_of_week, start_time, end_time) 
+            // insert into course_schdeules
+            $query = ("INSERT INTO course_schedules (course_id, day_of_week, start_time, end_time) 
                     VALUES (?, ?, ?, ?)");
-        $stmt = $db->prepare($query);
-        $result = $stmt->execute(array($course_id, $day_of_week, $start_time, $end_time));
+            $stmt = $db->prepare($query);
+            $result = $stmt->execute(array($course_id, $day_of_week, $start_time, $end_time));
+
+            echo "<script type='text/javascript'> alert('加入成功'); </script>";
+        }
+        
     }
 
 ?>
