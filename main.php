@@ -59,6 +59,7 @@ if (!isset($_SESSION['user_id'])) {
         <a href="schedule.php">Check My Enrollments</a>
         <a href="frontend/php/course_add_drop.php">Modify Enrollments</a>
         <a href="frontend/php/information_modify.php">Information Modify</a>
+        <a href="change_password.php">Change Password</a>
         <a href="logout.php">Logout</a>
     </div>
 </body>
