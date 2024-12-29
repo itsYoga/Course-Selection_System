@@ -62,7 +62,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
     <div class="container">
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
         <p>Manage courses and student enrollments.</p>
-        <a href="frontend/php/information_modify.php">Enroll/Drop Courses</a>
+        <a href="frontend/php/information_modify.php">Modify Courses</a>
         <a href="change_password.php">Change Password</a>
         <a href="logout.php">Logout</a>
     </div>
