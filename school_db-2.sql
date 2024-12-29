@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- 主機： 127.0.0.1
--- 產生時間： 2024-12-27 14:55:14
+-- 主機： localhost
+-- 產生時間： 2024 年 12 月 29 日 17:03
 -- 伺服器版本： 10.4.28-MariaDB
 -- PHP 版本： 8.2.4
 
@@ -61,7 +61,8 @@ CREATE TABLE `courses` (
 
 INSERT INTO `courses` (`course_id`, `course_name`, `description`, `credits`, `teacher_id`, `classroom_id`) VALUES
 (1, 'Data Base', 'Learning how to design data base.', 3, 1, 1),
-(2, 'Software Design', 'Hello', 3, 1, 2);
+(2, 'Software Design', 'Hello', 3, 1, 2),
+(3, 'Operating System', 'GG', 3, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,8 @@ CREATE TABLE `course_schedules` (
 
 INSERT INTO `course_schedules` (`schedule_id`, `course_id`, `day_of_week`, `start_time`, `end_time`) VALUES
 (1, 1, '1', 6, 8),
-(2, 2, '3', 2, 4);
+(2, 2, '3', 2, 4),
+(3, 3, '3', 5, 7);
 
 -- --------------------------------------------------------
 
@@ -99,6 +101,15 @@ CREATE TABLE `enrollment_records` (
   `status` enum('enrolled','dropped') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- 傾印資料表的資料 `enrollment_records`
+--
+
+INSERT INTO `enrollment_records` (`enrollment_id`, `student_id`, `course_id`, `enrollment_date`, `status`) VALUES
+(6, 1, 2, '2024-12-29', 'enrolled'),
+(7, 1, 1, '2024-12-29', 'enrolled'),
+(10, 1, 3, '2024-12-29', 'enrolled');
+
 -- --------------------------------------------------------
 
 --
@@ -112,6 +123,15 @@ CREATE TABLE `students` (
   `year` int(11) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `students`
+--
+
+INSERT INTO `students` (`student_id`, `name`, `major`, `year`, `email`) VALUES
+(1, 'Alice Johnson', 'Computer Science', 2, 'alice@example.com'),
+(2, 'Bob Smith', 'Mathematics', 3, 'bob@example.com'),
+(3, 'Charlie Brown', 'Physics', 1, 'charlie@example.com');
 
 -- --------------------------------------------------------
 
@@ -143,9 +163,22 @@ INSERT INTO `teachers` (`teacher_id`, `name`, `department`, `email`, `phone`) VA
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `student_id` int(11) DEFAULT NULL,
+  `teacher_id` int(11) DEFAULT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `email` varchar(100) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `role` enum('student','teacher') NOT NULL DEFAULT 'student'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `users`
+--
+
+INSERT INTO `users` (`user_id`, `student_id`, `teacher_id`, `username`, `email`, `password`, `role`) VALUES
+(1, 1, NULL, 'alicejohnson', 'alice@example.com', 'a21992c8f0aca8b8961b06c8e30eff6c', 'student'),
+(2, 2, NULL, 'bobsmith', 'bob@example.com', 'e10adc3949ba59abbe56e057f20f883e', 'student'),
+(3, 3, NULL, 'charliebrown', 'charlie@example.com', 'bb77d0d3b3f239fa5db73bdf27b8d29a', 'student'),
+(4, NULL, 1, 'Sean Tseng', 'yuchensean@gmail.com', '482c811da5d5b4bc6d497ffa98491e38', 'teacher');
 
 --
 -- 已傾印資料表的索引
@@ -216,25 +249,25 @@ ALTER TABLE `classrooms`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `course_schedules`
 --
 ALTER TABLE `course_schedules`
-  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `schedule_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `enrollment_records`
 --
 ALTER TABLE `enrollment_records`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `teachers`
@@ -246,7 +279,7 @@ ALTER TABLE `teachers`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- 已傾印資料表的限制式
