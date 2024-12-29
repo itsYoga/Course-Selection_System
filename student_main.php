@@ -56,16 +56,45 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
         a:hover {
             background-color: #0056b3;
         }
+        #loading {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    #loading img {
+        width: 400px; /* 增大寬度 */
+        height: 400px; /* 增大高度 */
+    }
     </style>
+    <script>
+        function showLoading(event) {
+            event.preventDefault(); // Prevent default link behavior
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.style.display = 'flex';
+            setTimeout(() => {
+                window.location.href = event.target.href; // Navigate after showing loading
+            }, 500); // Adjust delay if needed
+        }
+    </script>
 </head>
 <body>
+    <div id="loading">
+        <img src="loading.gif" alt="Loading">
+    </div>
     <div class="container">
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
         <p>Manage your courses and schedule.</p>
-        <a href="frontend/php/course_add_drop.php">Enroll/Drop Courses</a>
-        <a href="schedule.php">View Schedule</a>
-        <a href="change_password.php">Change Password</a>
-        <a href="logout.php">Logout</a>
+        <a href="frontend/php/course_add_drop.php" onclick="showLoading(event)">Enroll/Drop Courses</a>
+        <a href="schedule.php" onclick="showLoading(event)">View Schedule</a>
+        <a href="change_password.php" onclick="showLoading(event)">Change Password</a>
+        <a href="logout.php" onclick="showLoading(event)">Logout</a>
     </div>
 </body>
 </html>
