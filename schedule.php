@@ -52,7 +52,7 @@ function getStudentSchedule($conn, $student_id) {
               JOIN Courses ON Enrollment_Records.course_id = Courses.course_id
               JOIN Course_Schedules ON Courses.course_id = Course_Schedules.course_id
               JOIN Classrooms ON Courses.classroom_id = Classrooms.classroom_id
-              WHERE Enrollment_Records.student_id = ? AND status = 'enrolled'";
+              WHERE Enrollment_Records.student_id = ?";
 
     $stmt = $conn->prepare($query);
     

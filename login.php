@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli('localhost', 'root', 'sean930516', 'school_db');
+$conn = new mysqli('localhost', 'root', '', 'school_db');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $identifier = $conn->real_escape_string($_POST['identifier']); // 輸入的用戶名或電子郵件

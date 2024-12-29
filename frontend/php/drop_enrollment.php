@@ -15,13 +15,7 @@
     $username = $_SESSION['username'];  
 
     // 查詢此使用者的 student_id
-    $query = ("SELECT student_id FROM users WHERE username = ?");
-    $stmt = $db->prepare($query);
-    $error = $stmt->execute(array($username));
-    $result = $stmt->fetchAll();
-    for($i = 0; $i < count($result); $i++){
-        $student_id = $result[$i]['student_id'];
-    }
+    include "select_student_id.php";
 
     $status = "dropped";
     $input = json_decode(file_get_contents('php://input'), true);
