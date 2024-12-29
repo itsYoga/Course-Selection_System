@@ -15,7 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role']; // Store the role in the session
-        header("Location: main.php");
+
+        // 顯示 check.gif
+        echo "<div style='text-align:center; margin-top:20%;'>
+                <img src='check.gif' alt='Success' style='width:150px;'>
+                <p>Login successful! Redirecting...</p>
+              </div>";
+        echo "<script>
+                setTimeout(function() {
+                    window.location.href = 'main.php';
+                }, 2000);
+              </script>";
         exit();
     } else {
         echo "<script>alert('Invalid username/email or password');</script>";
