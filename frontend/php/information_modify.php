@@ -1,3 +1,14 @@
+<?php
+    require_once("../../db_conn.php");
+    session_start();
+
+    // 檢查是否已登入
+    if (!isset($_SESSION['username'])) {
+        header("Location: http://localhost/db_final_project_git/Course-Selection_System/login.php");
+        exit;
+    }
+?>
+
 <html>
     <head>
         <meta charset="UTF-8"></meta>
@@ -44,7 +55,6 @@
 </html>
 
 <?php
-    include_once "../db_conn.php"
 
 
 ?>

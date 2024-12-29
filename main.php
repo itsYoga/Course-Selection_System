@@ -57,6 +57,7 @@ if (!isset($_SESSION['user_id'])) {
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
         <p>You are successfully logged in.</p>
         <a href="schedule.php">Check My Enrollments</a>
+        <a href="frontend/php/course_add_drop.php">Modify Enrollments</a>
         <a href="logout.php">Logout</a>
     </div>
 </body>

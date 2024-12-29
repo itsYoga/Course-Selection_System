@@ -52,7 +52,7 @@ function getStudentSchedule($conn, $student_id) {
               JOIN Courses ON Enrollment_Records.course_id = Courses.course_id
               JOIN Course_Schedules ON Courses.course_id = Course_Schedules.course_id
               JOIN Classrooms ON Courses.classroom_id = Classrooms.classroom_id
-              WHERE Enrollment_Records.student_id = ?";
+              WHERE Enrollment_Records.student_id = ? AND status = 'enrolled'";
 
     $stmt = $conn->prepare($query);
     
@@ -60,7 +60,7 @@ function getStudentSchedule($conn, $student_id) {
         // 準備查詢失敗，輸出錯誤訊息
         die("Prepare failed: " . $conn->error);
     }
-    
+
     // 綁定參數並執行查詢
     $stmt->bind_param("i", $student_id);
     $stmt->execute();

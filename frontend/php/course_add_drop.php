@@ -1,5 +1,14 @@
 <?php
-    // include_once "../db_conn.php"
+    require_once("../../db_conn.php");
+    session_start();
+
+    // 檢查是否已登入
+    if (!isset($_SESSION['username'])) {
+        header("Location: http://localhost/db_final_project_git/Course-Selection_System/login.php");
+        exit;
+    }
+
+    $username = $_SESSION['username'];
 ?>
 
 <html>
@@ -152,20 +161,9 @@
 
         <br /><br />
 
-        <table id="test">
-            <thead>
-                <th scope="col">系所</th>
-                <th scope="col">名稱</th>
-                <th scope="col">時間</th>
-                <th scope="col">操作</th>
-            </thead>
-            <tbody></tbody>
-        </table>
-
         <?php
-            // 連接資料庫
-            include "../db_conn.php";
-            $query = ("select department, course_name, day_of_week, start_time, end_time from (courses natural join course_schedules) join teachers using(teacher_id)");
+            // 抓取資料庫中與課程相關訊息的檔案
+            $query = ("select department, course_name, day_of_week, start_time, end_time, course_id from (courses natural join course_schedules) join teachers using(teacher_id)");
             $stmt = $db->prepare($query);
             $error = $stmt->execute(array());
             $result = $stmt->fetchAll();
@@ -178,103 +176,146 @@
                 array_push($temp, $result[$i]['day_of_week']);
                 array_push($temp, $result[$i]['start_time']);
                 array_push($temp, $result[$i]['end_time']);
+                array_push($temp, $result[$i]['course_id']);
                 // print_r($temp);
                 array_push($send_to_js, $temp);
                 // print_r($send_to_js);
             }
             // 利用 json 來傳值給 js
             $result_json = json_encode($send_to_js);
-        ?>
-        
-        <script>
-            // 讀取目前的課程(未實作)
 
 
-
-
-            // 利用 json 來接收 php 給的值
-            let object1 = JSON.parse('<?=$result_json?>');
-            let result = Object.values(object1);
-
+            $result = json_decode($result_json, true);
             // 將 data 裡的上課時間從 day_of_week, start_time, end_time 轉成例如：101 102 103
-            let data = result;
-            let course_time_array = []; // 放全部的上課時間
-            let course_time_number = []; // 放每個 course 的上課節數
-            for (let i = 0; i < result.length; i++) {
-                // course_time 放最終的值
-                let course_time = "", temp;
-                for(let j = result[i][3], k = 0; j <= result[i][4]; j++, k++){
-                    temp = (result[i][2] * 100 + j).toString();
-                    course_time = course_time + temp;
-                    // course_time_array[i][k] = temp;
-                    course_time_array.push(temp);
+            $data = [];
+            $course_time_array = []; // 放全部的上課時間
+            $course_time_number = []; // 放每個 course 的上課節數
 
-                    if(j != result[i][4]){
-                        course_time = course_time + " ";
-                    }
+            $course_id = []; // 放每個 course 的 course_id
+
+            foreach ($result as $index => $course) {
+                $course_time = [];
+                $day_of_week = $course[2];
+                $start_time = $course[3];
+                $end_time = $course[4];
+                array_push($course_id, $course[5]);
+
+                for ($j = $start_time; $j <= $end_time; $j++) {
+                    $temp = $day_of_week * 100 + $j;
+                    $course_time[] = $temp;
+                    $course_time_array[] = $temp; // 全部節數加入陣列
                 }
-                course_time_number.push(result[i][4] - result[i][3] + 1);
-                console.log(course_time_number[i]);
 
-                console.log(course_time);
-                data[i][2] = course_time; // 把 day_of_week 改成 course_time
-                data[i].pop(); // pop 掉 start_time
-                data[i].pop(); // pop 掉 end_time
+                $course_time_number[] = count($course_time); // 每門課的節數
+                $course[2] = implode(' ', $course_time); // 用空格連接節數
+                array_splice($course, 3); // 移除 start_time, end_time, course_id    3 表示移除 $course[3] 以後的元素
+                $data[] = $course;
+            }
+        ?>
+
+        <!--輸出表格-->
+        <table id="test">
+            <thead>
+                <tr>
+                    <th>系所</th>
+                    <th>課程名稱</th>
+                    <th>上課時間</th>
+                    <th>加選</th>
+                    <th>退選</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($data as $i => $course): ?>
+                    <tr>
+                        <?php foreach ($course as $value): ?>
+                            <td><?= htmlspecialchars($value) ?></td>
+                        <?php endforeach; ?>
+                        <td><a href="javascript:;" onclick="addCourse(<?= $i ?>)">加選</a></td>
+                        <td><a href="javascript:;" onclick="dropCourse(<?= $i ?>)">退選</a></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <!--加退選功能-->
+        <script>
+            let courseTimeArray = <?= json_encode($course_time_array) ?>;
+            let courseTimeNumber = <?= json_encode($course_time_number) ?>;
+            let data = <?= json_encode($data) ?>;
+            let courseID = <?= json_encode($course_id) ?>
+            
+            // 加選功能
+            function addCourse(index) {
+                let tempCount = 0; // 計算目前的指定課程在 courseTimeArray 的哪個位置
+                for (let j = 0; j < index; j++) {
+                    tempCount += courseTimeNumber[j];
+                }
+
+                for (let j = tempCount; j < tempCount + courseTimeNumber[index]; j++) {
+                    let el = document.getElementById(courseTimeArray[j]);
+                    if (el) el.textContent = data[index][1]; // 更改指定表格的 text
+                }
+
+                // 呼叫 insert_enrollment.php
+                fetch('insert_enrollment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        course_id: courseID[index],
+                    }),
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // 假設 `insert_enrollment.php` 返回 JSON 格式的回應
+                    })
+                    .then((responseData) => {
+                        console.log('Enrollment successful:', responseData);
+                    })
+                    .catch((error) => {
+                        console.error('Error during enrollment:', error);
+                    });
             }
 
-            // 選取 id = test 的 table
-            let tbody = document.querySelector("#test");
-            for (let i = 0; i < data.length; i++) {
-                let tr = document.createElement('tr');
-                tbody.appendChild(tr);
-                for (let j = 0; j < data[i].length; j++) {
-                    let td = document.createElement('td');
-                    td.innerHTML = data[i][j];
-                    tr.appendChild(td);
+            // 退選功能
+            function dropCourse(index) {
+                let tempCount = 0; // 計算目前的指定課程在 courseTimeArray 的哪個位置
+                for (let j = 0; j < index; j++) {
+                    tempCount += courseTimeNumber[j];
                 }
 
-                // **加選功能**
-                let td_1 = document.createElement('td');
-                td_1.innerHTML = `<a href='javascript:;'>加選</a>`;
-                let a_1 = td_1.children[0];
-                a_1.addEventListener('click', () => {
+                for (let j = tempCount; j < tempCount + courseTimeNumber[index]; j++) {
+                    let el = document.getElementById(courseTimeArray[j]);
+                    if (el) el.textContent = ""; // 刪除指定表格的 text
+                }
 
-                    let tempCount = 0; // 計算當下被加選的課程放在 course_time_array 的哪個位置
-                    for(let j = 0; j < i; j++){
-                        tempCount += course_time_number[j];
-                    }
-
-                    for (let j = tempCount; j < tempCount + course_time_number[i]; j++) {
-                        
-                        var el = document.getElementById(course_time_array[j]);
-                        el.textContent = data[i][1]; // 將課程加入指定的表格中
-                    }
-                    
-                    // let parent = a.parentNode.parentNode
-                    // console.log(parent);
-                    // parent.remove()
+                // 呼叫 drop_enrollment.php
+                fetch('drop_enrollment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        course_id: courseID[index],
+                    }),
                 })
-                tr.appendChild(td_1);
-
-                // **退選功能**
-                let td_2 = document.createElement('td');
-                td_2.innerHTML = `<a href='javascript:;'>退選</a>`;
-                let a_2 = td_2.children[0];
-                a_2.addEventListener('click', () => {
-
-                    let tempCount = 0; // 計算當下被加選的課程放在 course_time_array 的哪個位置
-                    for(let j = 0; j < i; j++){
-                        tempCount += course_time_number[j];
-                    }
-
-                    for (let j = tempCount; j < tempCount + course_time_number[i]; j++) {
-                        
-                        var el = document.getElementById(course_time_array[j]);
-                        el.textContent = ""; // 將指定表格中的課程刪除
-                    }
-                })
-                tr.appendChild(td_2);
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // 假設 `drop_enrollment.php` 返回 JSON 格式的回應
+                    })
+                    .then((responseData) => {
+                        console.log('Enrollment successful:', responseData);
+                    })
+                    .catch((error) => {
+                        console.error('Error during enrollment:', error);
+                    });
             }
         </script>
+
     </body>
 </html>
