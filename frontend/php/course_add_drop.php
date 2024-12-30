@@ -17,28 +17,60 @@
         <title>課程加退選</title>
         <link rel="stylesheet" href="../css/course_add_drop.css" /><!--連接css-->
         <link rel="stylesheet" href="../css/menu.css" /><!--連接css-->
+
+        <style>
+            /* body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f9;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            } */
+            /* .container {
+                background-color: #ffffff;
+                padding: 40px 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                max-width: 400px;
+                width: 90%;
+            } */
+            /* h1 {
+                color: #333333;
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            p {
+                color: #666666;
+                margin: 15px 0;
+                font-size: 16px;
+            } */
+            a {
+                display: block;
+                margin: 10px 0;
+                padding: 2px 13px;
+                font-size: 16px;
+                text-decoration: none;
+                text-align: center;
+                color: #ffffff;
+                background-color: #007BFF;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+            }
+            a:hover {
+                background-color: #0056b3;
+            }
+            .button_container td{
+                border: none;
+            }
+        </style>
     </head>
     <body>
-        <!--可選擇頁面-->
-        <!-- <div class="menu">
-            <table class="menu_css">
-                <tr>
-                    <td>
-                        <a href="../../main.php">Home</a>
-                    </td>
-                    <td>
-                        <a href="../php/course_add_drop.php">課程加退選</a>
-                    </td>
-                    <td>
-                        <a href="../php/information_modify.php">編輯資訊</a>
-                    </td>
-                </tr>
-            </table>
-        </div> -->
-
-        <!-- <br /><br /> -->
         <div class="col-sm-8">
-            <table class="school_timetable"><!--暫定動態課表-->
+            <table class="school_timetable" style="margin: 0 auto;"><!--暫定動態課表-->
                 <caption>暫定動態課表</caption>
                 <thead>
                     <tr>
@@ -263,7 +295,7 @@
         ?>
 
         <!--輸出表格-->
-        <table id="test">
+        <table id="test" style="margin: 0 auto;">
             <thead>
                 <tr>
                     <th>系所</th>
@@ -366,7 +398,15 @@
                     });
             }
         </script>
-
-        <p><a href='../../main.php'><button type='button'>返回主畫面</button></a></p>
+        
+        <table class="button_container" style="margin: 0 auto;">
+            <tbody>
+                <td>
+                    <a href="../../main.php">返回主畫面</a>
+                </td>
+            </tbody>    
+            
+        </table>
+        
     </body>
 </html>

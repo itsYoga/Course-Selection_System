@@ -57,21 +57,21 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
             background-color: #0056b3;
         }
         #loading {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-    }
-    #loading img {
-        width: 400px; /* 增大寬度 */
-        height: 400px; /* 增大高度 */
-    }
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        #loading img {
+            width: 400px; /* 增大寬度 */
+            height: 400px; /* 增大高度 */
+        }
     </style>
     <script>
         function showLoading(event) {
